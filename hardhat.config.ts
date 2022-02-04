@@ -134,12 +134,19 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasPrice: 22000000000,
     },
-    testnet_aurora: {
+    aurora_testnet: {
       url: 'https://testnet.aurora.dev',
       chainId: 1313161555,
       accounts,
       live: false,
       tags: ["staging"],
+      saveDeployments: true,
+    },
+    aurora: {
+      url: 'https://mainnet.aurora.dev',
+      chainId: 1313161554,
+      accounts,
+      live: false,
       saveDeployments: true,
     },
     "fantom-testnet": {
