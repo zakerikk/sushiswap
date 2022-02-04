@@ -134,6 +134,14 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasPrice: 22000000000,
     },
+    testnet_aurora: {
+      url: 'https://testnet.aurora.dev',
+      chainId: 1313161555,
+      accounts,
+      live: false,
+      tags: ["staging"],
+      saveDeployments: true,
+    },
     "fantom-testnet": {
       url: "https://rpc.testnet.fantom.network",
       accounts,
