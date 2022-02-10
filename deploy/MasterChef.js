@@ -4,7 +4,9 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deployer, dev } = await getNamedAccounts()
 
   const sushi = await ethers.getContract("SushiToken")
-  
+
+  console.log('dev', dev)
+
   const { address } = await deploy("MasterChef", {
     from: deployer,
     args: [sushi.address, dev, "1000000000000000000000", "0", "1000000000000000000000"],

@@ -23,6 +23,8 @@ describe("MasterChef", function () {
   })
 
   it("should set correct state variables", async function () {
+    console.log('this.sushi.address', this.sushi.address)
+    console.log('this.dev.address', this.dev.address)
     this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "1000")
     await this.chef.deployed()
 
@@ -31,6 +33,10 @@ describe("MasterChef", function () {
     const sushi = await this.chef.sushi()
     const devaddr = await this.chef.devaddr()
     const owner = await this.sushi.owner()
+
+    console.log('sushi', sushi)
+    console.log('devaddr', devaddr)
+    console.log('owner', owner)
 
     expect(sushi).to.equal(this.sushi.address)
     expect(devaddr).to.equal(this.dev.address)

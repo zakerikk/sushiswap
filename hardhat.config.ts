@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
     excludeContracts: ["contracts/mocks/", "contracts/libraries/"],
   },
   mocha: {
-    timeout: 20000,
+    timeout: 80000,
   },
   namedAccounts: {
     deployer: {
@@ -51,6 +51,7 @@ const config: HardhatUserConfig = {
     dev: {
       // Default to 1
       default: 1,
+      1313161555: "0x23a824dd17d6571e1badd25a6247c685d6802985",
       // dev address mainnet
       // 1: "",
     },
@@ -348,6 +349,26 @@ const config: HardhatUserConfig = {
         },
       },
     ],
+    overrides: {
+      "contracts/AuroraToken.sol": {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      // "@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      //   version: "0.6.6",
+      //   settings: {
+      //     optimizer: {
+      //       enabled: true,
+      //       runs: 9000,
+      //     },
+      //   },
+      // },
+    },
   },
   spdxLicenseIdentifier: {
     overwrite: false,

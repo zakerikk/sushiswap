@@ -1,9 +1,15 @@
 const { task } = require("hardhat/config")
+const { delay } = require('nanodelay')
+const { constants, BigNumber } = require('ethers')
 
 const { ethers: { constants: { MaxUint256 }}, utils: { defaultAbiCoder }} = require("ethers")
 const { MINICHEF_ADDRESS } = require("@sushiswap/core-sdk")
 
 const fs = require("fs")
+
+function getBigNumber(amount, decimals = 18) {
+  return BigNumber.from(amount).mul(BigNumber.from(10).pow(decimals))
+}
 
 function getSortedFiles(dependenciesGraph) {
     const tsort = require("tsort")
@@ -34,6 +40,28 @@ function getFileWithoutImports(resolvedFile) {
 
     return resolvedFile.content.rawContent.replace(IMPORT_SOLIDITY_REGEX, "").trim()
 }
+
+task("chef_deposit", "test")
+  .setAction(async taskArgs => {
+    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271");
+    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9");
+
+    const sushi = await ethers.getContract("SushiToken")
+    const chef = await ethers.getContract("MasterChef")
+
+    await chef.add(100, AURORA_TOKEN.address, true)
+    await delay(1000)
+    await chef.add(100, ZAK_TOKEN.address, true)
+    await delay(1000)
+    await AURORA_TOKEN.approve(chef.address, getBigNumber(10))
+    await delay(1000)
+    await chef.deposit(0, getBigNumber(10))
+  });
+
+
+
+
+
 
 subtask("flat:get-flattened-sources", "Returns all contracts and their dependencies flattened")
     .addOptionalParam("files", undefined, undefined, types.any)
@@ -145,10 +173,10 @@ task("erc20:approve", "ERC20 approve")
 .addOptionalParam("deadline", MaxUint256)
 .setAction(async function ({ token, spender, deadline }, { ethers: { getNamedSigner } }, runSuper) {
   const erc20 = await ethers.getContractFactory("UniswapV2ERC20")
-  
-  const slp = erc20.attach(token)   
-  
-  await (await slp.connect(await getNamedSigner("dev")).approve(spender, deadline)).wait()    
+
+  const slp = erc20.attach(token)
+
+  await (await slp.connect(await getNamedSigner("dev")).approve(spender, deadline)).wait()
 });
 
 task("factory:set-fee-to", "Factory set fee to")
@@ -156,7 +184,7 @@ task("factory:set-fee-to", "Factory set fee to")
 .setAction(async function ({ feeTo }, { ethers: { getNamedSigner } }, runSuper) {
   const factory = await ethers.getContract("UniswapV2Factory")
   console.log(`Setting factory feeTo to ${feeTo} address`)
-  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait() 
+  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait()
 });
 
 // TODO: Swap?
@@ -175,7 +203,7 @@ task("router:add-liquidity", "Router add liquidity")
   const router = await ethers.getContract("UniswapV2Router")
   await run("erc20:approve", { token: tokenA, spender: router.address })
   await run("erc20:approve", { token: tokenB, spender: router.address })
-  await (await router.connect(await getNamedSigner("dev")).addLiquidity(tokenA, tokenB, tokenADesired, tokenBDesired, tokenAMinimum, tokenBMinimum, to, deadline)).wait()    
+  await (await router.connect(await getNamedSigner("dev")).addLiquidity(tokenA, tokenB, tokenADesired, tokenBDesired, tokenAMinimum, tokenBMinimum, to, deadline)).wait()
 });
 
 // TODO: Test
@@ -189,7 +217,7 @@ task("router:add-liquidity-eth", "Router add liquidity eth")
 .setAction(async function ({ token, tokenDesired, tokenMinimum, ethMinimum, to, deadline }, { ethers: { getNamedSigner } }, runSuper) {
   const router = await ethers.getContract("UniswapV2Router")
   await run("erc20:approve", { token, spender: router.address })
-  await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()    
+  await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()
 });
 
 task("migrate", "Migrates liquidity from Uniswap to SushiSwap")
@@ -238,7 +266,7 @@ task("bar:enter", "SushiBar enter")
   const bar = await ethers.getContract("SushiBar")
 
   await run("erc20:approve", { token: sushi.address, spender: bar.address })
-  
+
   await (await bar.connect(await getNamedSigner("dev")).enter(amount)).wait()
 });
 
@@ -250,7 +278,7 @@ task("bar:leave", "SushiBar leave")
   const bar = await ethers.getContract("SushiBar")
 
   await run("erc20:approve", { token: sushi.address, spender: bar.address })
-  
+
   await (await bar.connect(await getNamedSigner("dev")).leave(amount)).wait()
 });
 
@@ -333,10 +361,9 @@ task("deploy:complex-rewarder", "Deploy ComplexRewarder")
 //   const data = defaultAbiCoder.encode(['address', 'address', 'uint256', 'address'], [rewardToken, dev, rewardRate, lpToken])
 
 //   await (await cloneRewarder.init(data)).wait()
-  
+
 //   if ((await complexRewarder.owner()) !== dev) {
 //     console.log("Transfer ownership of CloneRewarderTime to dev");
 //     await (await cloneRewarder.transferOwnership(dev, true, false)).wait();
 //   }
 // });
-
