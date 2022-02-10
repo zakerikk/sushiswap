@@ -41,6 +41,7 @@ function getFileWithoutImports(resolvedFile) {
     return resolvedFile.content.rawContent.replace(IMPORT_SOLIDITY_REGEX, "").trim()
 }
 
+
 task("chef_deposit", "test")
   .setAction(async taskArgs => {
     const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271");
@@ -58,8 +59,48 @@ task("chef_deposit", "test")
     await chef.deposit(0, getBigNumber(10))
   });
 
+task("create_pair", "test")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
 
+    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271")
+    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9")
 
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.createPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
+task("get_pair", "test")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
+    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271")
+    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9")
+
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.getPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
+task("attach_pair", "test")
+  .setAction(async taskArgs => {
+    const pair = await ethers.getContractAt("UniswapV2Pair", "0x4bD2E8Ed5608be0A938087a393Bc9c0D43073540")
+    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271")
+    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9")
+
+    await AURORA_TOKEN.transfer("0x4bD2E8Ed5608be0A938087a393Bc9c0D43073540", getBigNumber(10))
+    await delay(1000)
+    await ZAK_TOKEN.transfer("0x4bD2E8Ed5608be0A938087a393Bc9c0D43073540", getBigNumber(10))
+    await delay(1000)
+
+    await pair.mint("0x23a824dd17d6571e1badd25a6247c685d6802985")
+  })
 
 
 
