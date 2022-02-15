@@ -50,6 +50,20 @@ task("create_pair", "create pair")
     console.log('result', result)
   })
 
+task("get_pair", "get pair address")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.getPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
 subtask("flat:get-flattened-sources", "Returns all contracts and their dependencies flattened")
     .addOptionalParam("files", undefined, undefined, types.any)
     .addOptionalParam("output", undefined, undefined, types.string)
