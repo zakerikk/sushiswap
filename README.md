@@ -9,7 +9,7 @@ In this directory, copy the environment variables file:
 cp .env.example .env
 ```
 
-Update `.env` with your own variables
+Update `.env` with your own variables, `WALLET_ADDRESS` and `MNEMONIC`.
 
 ### Aurora test net
 
