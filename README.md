@@ -2,9 +2,19 @@
 
 https://sushi.com/
 
-## Deployed Contracts
+## Deploy Contracts
 
-https://dev.sushi.com/sushiswap/contracts
+### Aurora test net
+
+```
+yarn aurora_testnet:deploy
+```
+
+### Aurora main net
+
+```
+yarn aurora:deploy
+```
 
 ## Docs
 

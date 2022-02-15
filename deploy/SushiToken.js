@@ -10,7 +10,5 @@
   })
 }
 
-//1
-
 module.exports.tags = ["SushiToken"]
 module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02"]

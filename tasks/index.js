@@ -44,8 +44,10 @@ function getFileWithoutImports(resolvedFile) {
 
 task("chef_deposit", "test")
   .setAction(async taskArgs => {
-    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271");
-    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9");
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    console.log('AURORA_TOKEN', AURORA_TOKEN)
 
     const sushi = await ethers.getContract("SushiToken")
     const chef = await ethers.getContract("MasterChef")
@@ -63,8 +65,8 @@ task("create_pair", "test")
   .setAction(async taskArgs => {
     const sushiMaker = await ethers.getContract("SushiMaker")
 
-    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271")
-    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9")
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContractAt("ZakToken")
 
     const factoryAddress = await sushiMaker.factory()
 

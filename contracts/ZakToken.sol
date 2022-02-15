@@ -5,7 +5,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract AuroraToken is ERC20 {
+contract ZakToken is ERC20 {
     uint8 constant _DECIMALS = 18;
     uint256 constant _TOTALCAP = 1000000000;
 
