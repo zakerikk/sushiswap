@@ -47,17 +47,15 @@ task("chef_deposit", "test")
     const AURORA_TOKEN = await ethers.getContract("AuroraToken")
     const ZAK_TOKEN = await ethers.getContract("ZakToken")
 
-    console.log('AURORA_TOKEN', AURORA_TOKEN)
-
     const sushi = await ethers.getContract("SushiToken")
     const chef = await ethers.getContract("MasterChef")
 
     await chef.add(100, AURORA_TOKEN.address, true)
-    await delay(1000)
+    await delay(2000)
     await chef.add(100, ZAK_TOKEN.address, true)
-    await delay(1000)
+    await delay(2000)
     await AURORA_TOKEN.approve(chef.address, getBigNumber(10))
-    await delay(1000)
+    await delay(2000)
     await chef.deposit(0, getBigNumber(10))
   });
 
@@ -66,7 +64,7 @@ task("create_pair", "test")
     const sushiMaker = await ethers.getContract("SushiMaker")
 
     const AURORA_TOKEN = await ethers.getContract("AuroraToken")
-    const ZAK_TOKEN = await ethers.getContractAt("ZakToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
 
     const factoryAddress = await sushiMaker.factory()
 
@@ -79,14 +77,10 @@ task("create_pair", "test")
 task("get_pair", "test")
   .setAction(async taskArgs => {
     const sushiMaker = await ethers.getContract("SushiMaker")
-    const AURORA_TOKEN = await ethers.getContractAt("AuroraToken", "0xf06c68af82a938f9a737484f4073bf89a5edb271")
-    const ZAK_TOKEN = await ethers.getContractAt("AuroraToken", "0x1eFC73F83146f386B1395A79D07b92bfb8f865C9")
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
 
     const factoryAddress = await sushiMaker.factory()
-
-    console.log('sushiMaker.UniswapV2Pair', sushiMaker.UniswapV2Pair)
-
-    // console.log('factoryAddress', factoryAddress)
 
     const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
     const result = await factory.getPair(AURORA_TOKEN.address, ZAK_TOKEN.address)

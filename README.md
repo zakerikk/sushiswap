@@ -4,30 +4,42 @@ https://sushi.com/
 
 ## Deploy Contracts
 
+In this directory, copy the environment variables file:
+```
+cp .env.example .env
+```
+
+Update `.env` with your own variables
+
 ### Aurora test net
 
 ```
+yarn
 yarn aurora_testnet:deploy
 ```
 
 ### Aurora main net
 
 ```
+yarn
 yarn aurora:deploy
 ```
 
-## Docs
+### Execute contracts
 
-[Development](docs/DEVELOPMENT.md)
+#### MasterChef deposit
 
-[Deployment](docs/DEPLOYMENT.md)
+```
+yarn hardhat chef_deposit --network aurora_testnet
+```
 
-[History](docs/HISTORY.md)
+#### Create pair
 
-## Security
+```
+yarn hardhat create_pair --network aurora_testnet
+```
 
-[Security Policy](SECURITY.md)
-
-## License
-
-[MIT](LICENSE.txt)
+#### Get pair
+```
+yarn hardhat get_pair --network aurora_testnet
+```

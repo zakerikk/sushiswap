@@ -51,7 +51,10 @@ const config: HardhatUserConfig = {
     dev: {
       // Default to 1
       default: 1,
-      1313161555: "0x23a824dd17d6571e1badd25a6247c685d6802985",
+      // aurora testnet
+      1313161555: process.env.WALLET_ADDRESS,
+      // aurora mainnet
+      1313161554: process.env.WALLET_ADDRESS,
       // dev address mainnet
       // 1: "",
     },
@@ -351,6 +354,15 @@ const config: HardhatUserConfig = {
     ],
     overrides: {
       "contracts/AuroraToken.sol": {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      "contracts/ZakToken.sol": {
         version: "0.7.6",
         settings: {
           optimizer: {
