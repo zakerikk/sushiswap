@@ -1,3 +1,5 @@
+const { delay } = require('nanodelay')
+
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments
 
@@ -6,6 +8,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const sushi = await ethers.getContract("SushiToken")
 
   console.log('dev', dev)
+  await delay(2000)
 
   const { address } = await deploy("MasterChef", {
     from: deployer,
@@ -17,6 +20,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   if (await sushi.owner() !== address) {
     // Transfer Sushi Ownership to Chef
     console.log("Transfer Sushi Ownership to Chef")
+    await delay(2000)
     await (await sushi.transferOwnership(address)).wait()
   }
 
@@ -24,6 +28,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   if (await masterChef.owner() !== dev) {
     // Transfer ownership of MasterChef to dev
     console.log("Transfer ownership of MasterChef to dev")
+    await delay(2000)
     await (await masterChef.transferOwnership(dev)).wait()
   }
 }

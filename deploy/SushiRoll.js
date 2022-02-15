@@ -1,3 +1,5 @@
+const { delay } = require('nanodelay')
+
 const UNISWAP_ROUTER = new Map()
 UNISWAP_ROUTER.set("1", "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
 UNISWAP_ROUTER.set("3", "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -22,6 +24,8 @@ module.exports = async function ({ getNamedAccounts, getChainId, deployments }) 
   const uniswapRouterAddress = UNISWAP_ROUTER.get(chainId)
 
   const sushiswapRouterAddress = (await deployments.get("UniswapV2Router02")).address
+
+  await delay(2000)
 
   await deploy("SushiRoll", {
     from: deployer,

@@ -27,19 +27,20 @@ yarn aurora:deploy
 
 ### Execute contracts
 
-#### MasterChef deposit
-
+#### MasterChef deposit, [link](https://github.com/zakerikk/sushiswap/blob/aurora/tasks/index.js#L45)
+To perform this method, the wallet must have a certain number of coins
 ```
 yarn hardhat chef_deposit --network aurora_testnet
 ```
 
-#### Create pair
+
+#### Create pair, [link](https://github.com/zakerikk/sushiswap/blob/aurora/tasks/index.js#L62)
 
 ```
 yarn hardhat create_pair --network aurora_testnet
 ```
 
-#### Get pair
+#### Get pair, [link](https://github.com/zakerikk/sushiswap/blob/aurora/tasks/index.js#L77)
 ```
 yarn hardhat get_pair --network aurora_testnet
 ```

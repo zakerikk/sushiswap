@@ -1,4 +1,5 @@
 const { WNATIVE_ADDRESS } = require("@sushiswap/core-sdk");
+const { delay } = require('nanodelay')
 
 module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deploy } = deployments;
@@ -18,6 +19,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   } else {
     throw Error("No WNATIVE ADDRESS!");
   }
+
+  await delay(2000)
 
   await deploy("BentoBoxV1", {
     from: deployer,

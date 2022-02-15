@@ -1,4 +1,5 @@
 const { WETH_ADDRESS } = require("@sushiswap/core-sdk")
+const { delay } = require('nanodelay')
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments
@@ -23,6 +24,8 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
     throw Error("No WNATIVE ADDRESS!");
   }
 
+  await delay(2000)
+
   await deploy("SushiMaker", {
     from: deployer,
     args: [factory.address, bar.address, sushi.address, wethAddress],
@@ -33,6 +36,7 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
   const maker = await ethers.getContract("SushiMaker")
   if (await maker.owner() !== dev) {
     console.log("Setting maker owner")
+    await delay(2000)
     await (await maker.transferOwnership(dev, true, false)).wait()
   }
 }

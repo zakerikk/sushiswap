@@ -3,6 +3,7 @@ const {
   bytecode,
   abi,
 } = require("../deployments/mainnet/UniswapV2Factory.json");
+const { delay } = require('nanodelay')
 
 module.exports = async function ({
   ethers,
@@ -13,6 +14,8 @@ module.exports = async function ({
   const { deploy } = deployments;
 
   const { deployer, dev } = await getNamedAccounts();
+
+  await delay(2000)
 
   await deploy("UniswapV2Factory", {
     contract: {

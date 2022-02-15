@@ -1,4 +1,5 @@
 const { SUSHI_ADDRESS } = require("@sushiswap/core-sdk");
+const { delay } = require('nanodelay')
 
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments;
@@ -17,6 +18,8 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     throw Error("No SUSHI!");
   }
 
+  await delay(2000)
+
   await deploy("MiniChefV2", {
     from: deployer,
     args: [sushiAddress],
@@ -27,6 +30,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const miniChefV2 = await ethers.getContract("MiniChefV2");
   if ((await miniChefV2.owner()) !== dev) {
     console.log("Transfer ownership of MiniChef to dev");
+    await delay(2000)
     await (await miniChefV2.transferOwnership(dev, true, false)).wait();
   }
 };
