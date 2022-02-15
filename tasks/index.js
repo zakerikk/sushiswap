@@ -35,6 +35,21 @@ function getFileWithoutImports(resolvedFile) {
     return resolvedFile.content.rawContent.replace(IMPORT_SOLIDITY_REGEX, "").trim()
 }
 
+task("create_pair", "create pair")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
+
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.createPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
 subtask("flat:get-flattened-sources", "Returns all contracts and their dependencies flattened")
     .addOptionalParam("files", undefined, undefined, types.any)
     .addOptionalParam("output", undefined, undefined, types.string)
@@ -145,10 +160,10 @@ task("erc20:approve", "ERC20 approve")
 .addOptionalParam("deadline", MaxUint256)
 .setAction(async function ({ token, spender, deadline }, { ethers: { getNamedSigner } }, runSuper) {
   const erc20 = await ethers.getContractFactory("UniswapV2ERC20")
-  
-  const slp = erc20.attach(token)   
-  
-  await (await slp.connect(await getNamedSigner("dev")).approve(spender, deadline)).wait()    
+
+  const slp = erc20.attach(token)
+
+  await (await slp.connect(await getNamedSigner("dev")).approve(spender, deadline)).wait()
 });
 
 task("factory:set-fee-to", "Factory set fee to")
@@ -156,7 +171,7 @@ task("factory:set-fee-to", "Factory set fee to")
 .setAction(async function ({ feeTo }, { ethers: { getNamedSigner } }, runSuper) {
   const factory = await ethers.getContract("UniswapV2Factory")
   console.log(`Setting factory feeTo to ${feeTo} address`)
-  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait() 
+  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait()
 });
 
 // TODO: Swap?
@@ -175,7 +190,7 @@ task("router:add-liquidity", "Router add liquidity")
   const router = await ethers.getContract("UniswapV2Router")
   await run("erc20:approve", { token: tokenA, spender: router.address })
   await run("erc20:approve", { token: tokenB, spender: router.address })
-  await (await router.connect(await getNamedSigner("dev")).addLiquidity(tokenA, tokenB, tokenADesired, tokenBDesired, tokenAMinimum, tokenBMinimum, to, deadline)).wait()    
+  await (await router.connect(await getNamedSigner("dev")).addLiquidity(tokenA, tokenB, tokenADesired, tokenBDesired, tokenAMinimum, tokenBMinimum, to, deadline)).wait()
 });
 
 // TODO: Test
@@ -189,7 +204,7 @@ task("router:add-liquidity-eth", "Router add liquidity eth")
 .setAction(async function ({ token, tokenDesired, tokenMinimum, ethMinimum, to, deadline }, { ethers: { getNamedSigner } }, runSuper) {
   const router = await ethers.getContract("UniswapV2Router")
   await run("erc20:approve", { token, spender: router.address })
-  await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()    
+  await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()
 });
 
 task("migrate", "Migrates liquidity from Uniswap to SushiSwap")
@@ -238,7 +253,7 @@ task("bar:enter", "SushiBar enter")
   const bar = await ethers.getContract("SushiBar")
 
   await run("erc20:approve", { token: sushi.address, spender: bar.address })
-  
+
   await (await bar.connect(await getNamedSigner("dev")).enter(amount)).wait()
 });
 
@@ -250,7 +265,7 @@ task("bar:leave", "SushiBar leave")
   const bar = await ethers.getContract("SushiBar")
 
   await run("erc20:approve", { token: sushi.address, spender: bar.address })
-  
+
   await (await bar.connect(await getNamedSigner("dev")).leave(amount)).wait()
 });
 
@@ -333,10 +348,9 @@ task("deploy:complex-rewarder", "Deploy ComplexRewarder")
 //   const data = defaultAbiCoder.encode(['address', 'address', 'uint256', 'address'], [rewardToken, dev, rewardRate, lpToken])
 
 //   await (await cloneRewarder.init(data)).wait()
-  
+
 //   if ((await complexRewarder.owner()) !== dev) {
 //     console.log("Transfer ownership of CloneRewarderTime to dev");
 //     await (await cloneRewarder.transferOwnership(dev, true, false)).wait();
 //   }
 // });
-
