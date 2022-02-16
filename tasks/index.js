@@ -1,9 +1,14 @@
 const { task } = require("hardhat/config")
+const { constants, BigNumber } = require('ethers')
 
 const { ethers: { constants: { MaxUint256 }}, utils: { defaultAbiCoder }} = require("ethers")
 const { MINICHEF_ADDRESS } = require("@sushiswap/core-sdk")
 
 const fs = require("fs")
+
+function getBigNumber(amount, decimals = 18) {
+  return BigNumber.from(amount).mul(BigNumber.from(10).pow(decimals))
+}
 
 function getSortedFiles(dependenciesGraph) {
     const tsort = require("tsort")
@@ -34,6 +39,49 @@ function getFileWithoutImports(resolvedFile) {
 
     return resolvedFile.content.rawContent.replace(IMPORT_SOLIDITY_REGEX, "").trim()
 }
+
+task("create_pair", "create pair")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
+
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.createPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
+task("get_pair", "get pair address")
+  .setAction(async taskArgs => {
+    const sushiMaker = await ethers.getContract("SushiMaker")
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    const factoryAddress = await sushiMaker.factory()
+
+    const factory = await ethers.getContractAt("IUniswapV2Factory", factoryAddress)
+    const result = await factory.getPair(AURORA_TOKEN.address, ZAK_TOKEN.address)
+
+    console.log('result', result)
+  })
+
+task("chef_deposit", "test")
+  .setAction(async taskArgs => {
+    const AURORA_TOKEN = await ethers.getContract("AuroraToken")
+    const ZAK_TOKEN = await ethers.getContract("ZakToken")
+
+    const chef = await ethers.getContract("MasterChef")
+
+    await chef.add(100, AURORA_TOKEN.address, true)
+    await chef.add(100, ZAK_TOKEN.address, true)
+    await AURORA_TOKEN.approve(chef.address, getBigNumber(10))
+
+    await chef.deposit(0, getBigNumber(10))
+  })
 
 subtask("flat:get-flattened-sources", "Returns all contracts and their dependencies flattened")
     .addOptionalParam("files", undefined, undefined, types.any)

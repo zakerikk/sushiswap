@@ -51,6 +51,10 @@ const config: HardhatUserConfig = {
     dev: {
       // Default to 1
       default: 1,
+      // aurora testnet
+      1313161555: process.env.WALLET_ADDRESS,
+      // aurora mainnet
+      1313161554: process.env.WALLET_ADDRESS,
       // dev address mainnet
       // 1: "",
     },
@@ -133,6 +137,21 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       gasPrice: 22000000000,
+    },
+    aurora_testnet: {
+      url: 'https://testnet.aurora.dev',
+      chainId: 1313161555,
+      accounts,
+      live: false,
+      tags: ["staging"],
+      saveDeployments: true,
+    },
+    aurora: {
+      url: 'https://mainnet.aurora.dev',
+      chainId: 1313161554,
+      accounts,
+      live: false,
+      saveDeployments: true,
     },
     "fantom-testnet": {
       url: "https://rpc.testnet.fantom.network",
@@ -333,6 +352,26 @@ const config: HardhatUserConfig = {
         },
       },
     ],
+    overrides: {
+      "contracts/AuroraToken.sol": {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      "contracts/ZakToken.sol": {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    },
   },
   spdxLicenseIdentifier: {
     overwrite: false,

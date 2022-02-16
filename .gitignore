@@ -9,3 +9,5 @@ package-lock.json
 coverage.json
 .env
 .DS_Store
+deployments/aurora/
+deployments/aurora_testnet/

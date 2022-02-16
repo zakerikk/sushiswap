@@ -10,13 +10,12 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
   const factory = await ethers.getContract("UniswapV2Factory")
   const bar = await ethers.getContract("SushiBar")
   const sushi = await ethers.getContract("SushiToken")
-  
   let wethAddress;
-  
-  if (chainId === '31337') {
-    wethAddress = (await deployments.get("WETH9Mock")).address
-  } else if (chainId in WETH_ADDRESS) {
-    wethAddress = WETH_ADDRESS[chainId]
+
+  if (chainId === "1313161555" || chainId === "1313161554") {
+    wethAddress = (await deployments.get("WETH9Mock")).address;
+  } else if (chainId in WNATIVE_ADDRESS) {
+    wethAddress = WNATIVE_ADDRESS[chainId];
   } else {
     throw Error("No WETH!")
   }
